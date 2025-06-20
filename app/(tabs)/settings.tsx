@@ -1,24 +1,19 @@
-import { View, Text, StyleSheet, Switch, useColorScheme } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Switch } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
 
 export default function SettingsScreen() {
-  const systemTheme = useColorScheme();
-  const [isDarkMode, setIsDarkMode] = useState(systemTheme === 'dark');
+  const { theme, toggleTheme } = useTheme();
 
-  useEffect(() => {
-    // Optional: persist user theme preference to local storage
-  }, [isDarkMode]);
+  const isDark = theme === 'dark';
 
   return (
-    <View style={[styles.container, isDarkMode && styles.containerDark]}>
-      <Text style={[styles.title, isDarkMode && styles.textDark]}>
-        Dark Mode
-      </Text>
+    <View style={[styles.container, isDark && styles.containerDark]}>
+      <Text style={[styles.title, isDark && styles.textDark]}>Dark Mode</Text>
       <Switch
-        value={isDarkMode}
-        onValueChange={setIsDarkMode}
+        value={isDark}
+        onValueChange={toggleTheme}
         trackColor={{ false: '#ccc', true: '#007AFF' }}
-        thumbColor={isDarkMode ? '#fff' : '#f4f3f4'}
+        thumbColor={isDark ? '#fff' : '#f4f3f4'}
       />
     </View>
   );

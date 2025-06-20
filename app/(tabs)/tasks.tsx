@@ -4,6 +4,7 @@ import {
   FlatList, StyleSheet, KeyboardAvoidingView, Platform
 } from 'react-native';
 import TaskItem from '../../components/TaskItem';
+import { useTheme } from '../theme/ThemeContext';
 
 interface Task {
   id: string;
@@ -14,6 +15,9 @@ interface Task {
 export default function TasksScreen() {
   const [input, setInput] = useState('');
   const [tasks, setTasks] = useState<Task[]>([]);
+
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   const addTask = () => {
     if (!input.trim()) return;
@@ -41,16 +45,17 @@ export default function TasksScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}
+      style={[styles.container, isDark && styles.containerDark]}
     >
-      <Text style={styles.title}>ToDo Tasks</Text>
+      <Text style={[styles.title, isDark && styles.textDark]}>ToDo Tasks</Text>
 
       <View style={styles.inputRow}>
         <TextInput
           placeholder="New task..."
+          placeholderTextColor={isDark ? '#aaa' : '#666'}
           value={input}
           onChangeText={setInput}
-          style={styles.input}
+          style={[styles.input, isDark && styles.inputDark]}
         />
         <TouchableOpacity onPress={addTask} style={styles.addButton}>
           <Text style={styles.addButtonText}>+</Text>
@@ -65,6 +70,7 @@ export default function TasksScreen() {
             task={item}
             onToggle={() => toggleTask(item.id)}
             onDelete={() => deleteTask(item.id)}
+            theme={theme}
           />
         )}
       />
@@ -74,16 +80,31 @@ export default function TasksScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-  title: { fontSize: 26, fontWeight: 'bold', marginBottom: 16 },
+  containerDark: { backgroundColor: '#121212' },
+  title: { fontSize: 26, fontWeight: 'bold', marginBottom: 16, color: '#000' },
+  textDark: { color: '#fff' },
   inputRow: { flexDirection: 'row', marginBottom: 20 },
   input: {
-    flex: 1, borderWidth: 1, borderColor: '#ccc',
-    borderRadius: 8, padding: 10, fontSize: 16
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 10,
+    fontSize: 16,
+    color: '#000',
+  },
+  inputDark: {
+    backgroundColor: '#1e1e1e',
+    borderColor: '#444',
+    color: '#fff',
   },
   addButton: {
-    marginLeft: 10, backgroundColor: '#007AFF',
-    paddingHorizontal: 16, borderRadius: 8,
-    justifyContent: 'center', alignItems: 'center'
+    marginLeft: 10,
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   addButtonText: { color: '#fff', fontSize: 20 },
 });
